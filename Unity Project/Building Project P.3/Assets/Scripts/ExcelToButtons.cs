@@ -1,15 +1,17 @@
 /*This script handles the assignment of the Level 1-3 button information from the corresponding repository*/
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using System.IO;
 using TMPro;
-using UnityEngine.UI;
+using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class ExcelToButtons : MonoBehaviour
 {
     // ✅ PUBLIC REPOSITORY URL (No authentication needed)
-    private string githubRawUrl = "https://raw.githubusercontent.com/kamarianakis/CSD-3D/refs/heads/main/Excel%20Files/ButtonNames.csv";
+    public string buttonNameCSVURL = "https://raw.githubusercontent.com/kamarianakis/CSD-3D/refs/heads/main/Excel%20Files/ButtonNames.csv";
+    public bool isLocalURL = false;
 
     public GameObject level1;
     public GameObject level2;
@@ -32,13 +34,35 @@ public class ExcelToButtons : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(DownloadCSV());
+        if (isLocalURL)
+        {
+            OpenLocalCSV();
+        }
+        else
+        {
+            StartCoroutine(DownloadCSV());
+        }
+    }
+
+    void OpenLocalCSV()
+    {
+        try
+        {
+            StreamReader reader = new StreamReader(buttonNameCSVURL);
+            string csvData = reader.ReadToEnd();
+            ProcessCSV(csvData);
+            reader.Close();
+        }
+        catch (IOException e)
+        {
+            Debug.LogException(e);
+        }
     }
 
     IEnumerator DownloadCSV()
     {
 
-        UnityWebRequest request = UnityWebRequest.Get(githubRawUrl);
+        UnityWebRequest request = UnityWebRequest.Get(buttonNameCSVURL);
 
         yield return request.SendWebRequest();
 

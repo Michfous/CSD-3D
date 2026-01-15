@@ -1,24 +1,47 @@
 /*This function handles the reading and assigning of the door names that float in front of the doors, from a online repository*/
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using System.IO;
 using TMPro;
+using UnityEditor.PackageManager.Requests;
+using UnityEngine;
 using UnityEngine.Networking;
 
 public class ExcelToCanvas : MonoBehaviour
 {
-    // ✅ PUBLIC REPOSITORY URL (No authentication needed)
-    private string githubRawUrl = "https://raw.githubusercontent.com/kamarianakis/CSD-3D/refs/heads/main/Excel%20Files/DoorNames.csv";
+    // ✅ PUBLIC REPOSITORY URL (No authentication needed) | or local file for testing
+    public string doorNameCSVURL = "https://raw.githubusercontent.com/kamarianakis/CSD-3D/refs/heads/main/Excel%20Files/DoorNames.csv";
+    public bool isLocalURL = false;
 
     void Start()
     {
-        StartCoroutine(DownloadCSV());
+        if (isLocalURL)
+        {
+            OpenLocalCSV();
+        } else {
+            StartCoroutine(DownloadCSV());
+        }
+    }
+
+    void OpenLocalCSV()
+    {
+        try
+        {
+            StreamReader reader = new StreamReader(doorNameCSVURL);
+            string csvData = reader.ReadToEnd();
+            ProcessCSV(csvData);
+            reader.Close();
+        }
+        catch(IOException e)
+        {
+            Debug.LogException(e);
+        }
     }
 
     IEnumerator DownloadCSV()
     {
 
-        UnityWebRequest request = UnityWebRequest.Get(githubRawUrl);
+        UnityWebRequest request = UnityWebRequest.Get(doorNameCSVURL);
 
         yield return request.SendWebRequest();
 
