@@ -5,6 +5,7 @@ using System.IO;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class ExcelToCanvas : MonoBehaviour
 {
@@ -16,24 +17,10 @@ public class ExcelToCanvas : MonoBehaviour
     {
         if (isLocalURL)
         {
-            OpenLocalCSV();
+            string csvData = LocalFileReader.LoadText(doorNameCSVURL);
+            ProcessCSV(csvData);
         } else {
             StartCoroutine(DownloadCSV());
-        }
-    }
-
-    void OpenLocalCSV()
-    {
-        try
-        {
-            StreamReader reader = new StreamReader(doorNameCSVURL);
-            string csvData = reader.ReadToEnd();
-            ProcessCSV(csvData);
-            reader.Close();
-        }
-        catch(IOException e)
-        {
-            Debug.LogException(e);
         }
     }
 
@@ -86,10 +73,12 @@ public class ExcelToCanvas : MonoBehaviour
                 TextMeshProUGUI nameTextMesh = canvas.transform.Find("Name")?.GetComponent<TextMeshProUGUI>();
                 TextMeshProUGUI detailsTextMesh = canvas.transform.Find("Details")?.GetComponent<TextMeshProUGUI>();
                 TextMeshProUGUI extraInfoTextMesh = canvas.transform.Find("Extra Info")?.GetComponent<TextMeshProUGUI>();
+                Image itemImage = canvas.transform.Find("Image")?.GetComponent<Image>();
 
                 if (nameTextMesh != null) nameTextMesh.text = nameText;
                 if (detailsTextMesh != null) detailsTextMesh.text = detailsText;
                 if (extraInfoTextMesh != null) extraInfoTextMesh.text = extraInfoText;
+                if (itemImage != null) ImageIDAssetLoader.SetImageByID(itemImage, nameText);
 
                 canvas.gameObject.SetActive(false);
             }

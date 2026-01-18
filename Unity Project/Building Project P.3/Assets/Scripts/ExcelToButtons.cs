@@ -36,26 +36,12 @@ public class ExcelToButtons : MonoBehaviour
     {
         if (isLocalURL)
         {
-            OpenLocalCSV();
+            string csvData = LocalFileReader.LoadText(buttonNameCSVURL);
+            ProcessCSV(csvData);
         }
         else
         {
             StartCoroutine(DownloadCSV());
-        }
-    }
-
-    void OpenLocalCSV()
-    {
-        try
-        {
-            StreamReader reader = new StreamReader(buttonNameCSVURL);
-            string csvData = reader.ReadToEnd();
-            ProcessCSV(csvData);
-            reader.Close();
-        }
-        catch (IOException e)
-        {
-            Debug.LogException(e);
         }
     }
 
