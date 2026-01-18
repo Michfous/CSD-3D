@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -11,14 +12,75 @@ public class EventPanelsCreator : MonoBehaviour
     public Transform scrollContent;
     public float panelScreenHeightPrecentage = 0.6f;
     public List<GameObject> waypointObjects;
+    public List<GameObject> banners;
 
     IEnumerator Start()
     {
         yield return EventsConfigService.Initialize("EventsConfiguration.json");
 
         yield return PopulateScrollView(EventsConfigService.Config.events);
+
+        yield return SpawnBanners(EventsConfigService.Config.events);
     }
-    
+
+    IEnumerator SpawnBanners(EventConfig[] events)
+    {
+        if (banners.Count > events.Length)
+        {
+            int i = 0;
+            foreach (var e in events)
+            {
+                yield return SetBannerImage(banners[i], e.posterUrl);
+                i++;
+            }
+        }
+        else
+        {
+            int i = 0;
+            foreach(var b in banners)
+            {
+                yield return SetBannerImage(b, events[i].posterUrl);
+                i++;
+            }
+        }
+    }
+
+    IEnumerator SetBannerImage(GameObject banner, string url)
+    {
+        Debug.Log("SetBannerImage");
+        using UnityWebRequest request = UnityWebRequestTexture.GetTexture(url);
+#if UNITY_WEBGL
+        request.SetRequestHeader("Accept", "image/*");
+#endif
+        yield return request.SendWebRequest();
+
+        if (request.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError($"Failed to load image: {request.error}");
+            yield break;
+        }
+
+        Texture2D texture = DownloadHandlerTexture.GetContent(request);
+
+        if (texture == null)
+        {
+            Debug.LogError("Downloaded texture is null.");
+            yield break;
+        }
+
+        Renderer renderer = banner.transform.Find("Label").GetComponent<Renderer>();
+        if (renderer != null)
+        {
+            Material material = new Material(Shader.Find("Unlit/Texture"));
+            material.mainTexture = texture;
+            renderer.material = material;
+        }
+        else
+        {
+            Debug.Log("faﬂled renderer");
+        }
+    }
+
     IEnumerator PopulateScrollView(EventConfig[] events)
     {
         templatePanel.SetActive(false);
