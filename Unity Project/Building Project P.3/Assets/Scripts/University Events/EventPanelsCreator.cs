@@ -1,15 +1,16 @@
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
-using static UnityEngine.Rendering.DebugUI;
 
 public class EventPanelsCreator : MonoBehaviour
 {
     public GameObject templatePanel;
     public Transform scrollContent;
     public float panelScreenHeightPrecentage = 0.6f;
+    public List<GameObject> waypointObjects;
 
     IEnumerator Start()
     {
@@ -28,7 +29,7 @@ public class EventPanelsCreator : MonoBehaviour
             GameObject newPanel = Instantiate(templatePanel, scrollContent);
             le = newPanel.GetComponent<LayoutElement>();
             le.preferredHeight = Screen.height * panelScreenHeightPrecentage;
-
+            
             yield return PopulateEventPanel(newPanel, e);
             newPanel.SetActive(true);
         }
@@ -39,7 +40,6 @@ public class EventPanelsCreator : MonoBehaviour
         PopulateInfoPanel(panel, eventConfig);
 
         Image poster = panel.transform.Find("Poster Frame/Poster").GetComponent<Image>();
-
         if (eventConfig.posterUrl != null)
         {
             string path = System.IO.Path.Combine(
@@ -61,8 +61,19 @@ public class EventPanelsCreator : MonoBehaviour
         location.text = eventConfig.location;
         linkText.text = eventConfig.eventWebsite;
         openLinkScript.url = eventConfig.eventWebsite;
+
+        // set the room (GameObject) that the event happens so the navigation code knows
+        GameObject room = RoomFinder.FindRoom(eventConfig.location, waypointObjects);
+        if (room != null)
+        {
+            panel.transform.Find("Info Panel/Navigation").GetComponent<EventNavigator>().Room = room;
+        }
+        else
+        {
+            Debug.Log("Couldn't find room with the name: " + eventConfig.location);
+        }
     }
-    
+
     private IEnumerator LoadImageCoroutine(Image targetImage, string url)
     {
         using UnityWebRequest request = UnityWebRequestTexture.GetTexture(url);
