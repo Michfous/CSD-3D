@@ -25,29 +25,31 @@ public class EventPanelsCreator : MonoBehaviour
 
     IEnumerator SpawnBanners(EventConfig[] events)
     {
-        if (banners.Count > events.Length)
+        int i = 0;
+        int j = 0;
+        while (i < events.Length && j < banners.Count)
         {
-            int i = 0;
-            foreach (var e in events)
-            {
-                yield return SetBannerImage(banners[i], e.posterUrl);
-                i++;
-            }
+            var e = events[i];
+            var b = banners[j];
+
+            if (e.bannerUrl == null) continue;
+            string path = System.IO.Path.Combine(
+                Application.streamingAssetsPath,
+                e.bannerUrl
+            );
+            yield return SetBannerImage(b, path);
+            ++i;
+            ++j;
         }
-        else
+        while (j < banners.Count)
         {
-            int i = 0;
-            foreach(var b in banners)
-            {
-                yield return SetBannerImage(b, events[i].posterUrl);
-                i++;
-            }
+            banners[j].SetActive(false);
+            j++;
         }
     }
 
     IEnumerator SetBannerImage(GameObject banner, string url)
     {
-        Debug.Log("SetBannerImage");
         using UnityWebRequest request = UnityWebRequestTexture.GetTexture(url);
 #if UNITY_WEBGL
         request.SetRequestHeader("Accept", "image/*");
@@ -68,16 +70,15 @@ public class EventPanelsCreator : MonoBehaviour
             yield break;
         }
 
-        Renderer renderer = banner.transform.Find("Label").GetComponent<Renderer>();
-        if (renderer != null)
+        //Renderer renderer = banner.transform.GetComponent<Renderer>();
+        Renderer labelRenderer = banner.transform.Find("Label").GetComponent<Renderer>();
+        if (labelRenderer != null)
         {
-            Material material = new Material(Shader.Find("Unlit/Texture"));
-            material.mainTexture = texture;
-            renderer.material = material;
+            labelRenderer.material.mainTexture = texture;
         }
         else
         {
-            Debug.Log("faßled renderer");
+            Debug.Log("Faßled to find renderer");
         }
     }
 

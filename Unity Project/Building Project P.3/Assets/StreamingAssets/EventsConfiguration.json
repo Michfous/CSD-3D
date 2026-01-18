@@ -1,15 +1,17 @@
 {
     "events":[
         {
-            "title": "Rickroll",
+            "title": "CSD",
             "location": "A-121",
-            "posterUrl": "Posters/poster2.png",
-            "eventWebsite": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+            "posterUrl": "Posters/poster2.jpg",
+            "bannerUrl": "Banners/banner2.jpg",
+            "eventWebsite": "https://csd.uoc.gr"
         },
         {
             "title": "FuturEd AI Hackathon",
-            "location": "Αναγνωστήριο Α",
+            "location": "H-204",
             "posterUrl": "Posters/poster1.jpg",
+            "bannerUrl": "Banners/banner1.jpg",
             "eventWebsite": "https://hackathon.csd.uoc.gr/"
         }
     ]

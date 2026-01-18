@@ -1,29 +1,9 @@
 fileFormatVersion: 2
-guid: 4b85b0f997c27574ab1ac82f93095698
+guid: 276ae4c0a4440e044a6f2ccb463bf309
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Banner Label
-    second: {fileID: 2100000, guid: e1cca0da5fd062d4288ec1ae90187d5f, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: FrameMain
-    second: {fileID: 2100000, guid: 996cb8e7d12a71e449e3bb47e351f039, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: FramePlastic
-    second: {fileID: 2100000, guid: 55214dafb31b06d42ab47fc25daf4956, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: FrameSecondary
-    second: {fileID: 2100000, guid: a4ee9bca766ef174e9512450bafa7998, type: 2}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -66,7 +46,7 @@ ModelImporter:
     nodeNameCollisionStrategy: 1
     fileIdsGeneration: 2
     swapUVChannels: 0
-    generateSecondaryUV: 1
+    generateSecondaryUV: 0
     useFileUnits: 1
     keepQuads: 0
     weldVertices: 1
