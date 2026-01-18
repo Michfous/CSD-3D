@@ -3,7 +3,12 @@ guid: a58acbd7b419ac046a64a435cf256a76
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: HMI__3P14__Vinyl1
+    second: {fileID: 2100000, guid: 06c85f5b3faefb04d9231217489360d6, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
