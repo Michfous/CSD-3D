@@ -4,6 +4,9 @@ public class PlayerInfo : MonoBehaviour, IFloorEnumerable
 {
     private bool _isHandicapped = false;
 
+    /* Whether the player is currently using the emergency exit navigation */
+    private bool _isExiting = false;
+
     public GameObject GetPlayer() { return gameObject; }
 
     public bool IsHandicapped() {  return _isHandicapped; }
@@ -24,5 +27,15 @@ public class PlayerInfo : MonoBehaviour, IFloorEnumerable
     public void ToggleHandicapped()
     {
         _isHandicapped = !_isHandicapped;
+    }
+
+    public bool IsExiting()
+    {
+        return _isExiting;
+    }
+
+    public void SetExiting(bool state)
+    {
+        _isExiting = state;
     }
 }

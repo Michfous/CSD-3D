@@ -21,8 +21,6 @@ public class EmergencyExitScript : MonoBehaviour
             playerFloor = floorIntf.GetFloor();
         }
 
-        Debug.Log("Player is in floor "+playerFloor);
-
         bool isHandicapped = playerInfo.IsHandicapped();
 
         // Gather all emergency exits in the scene
@@ -92,6 +90,9 @@ public class EmergencyExitScript : MonoBehaviour
 
         if (nearestObj != null)
         {
+            // About to enable exit navigation, so player will in fact be exiting
+            playerInfo.SetExiting(true);
+
             if (nearestObj.TryGetComponent<EmergencyExitPointScript>(out EmergencyExitPointScript emergencyPoint))
             {
                 // Try getting the waypoint target
