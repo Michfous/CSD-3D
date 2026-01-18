@@ -1,0 +1,16 @@
+{
+    "events":[
+        {
+            "title": "Rickroll",
+            "location": "A 121",
+            "posterUrl": "Posters/poster2.png",
+            "eventWebsite": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        },
+        {
+            "title": "FuturEd AI Hackathon",
+            "location": "Αναγνωστήριο Α",
+            "posterUrl": "Posters/poster1.jpg",
+            "eventWebsite": "https://hackathon.csd.uoc.gr/"
+        }
+    ]
+}
