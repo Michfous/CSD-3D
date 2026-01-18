@@ -96,7 +96,7 @@ public class ImageIDAssetLoader : MonoBehaviour
 
     private IEnumerator _SetImageByID(UnityEngine.UI.Image image, string id)
     {
-        if (_matchings != null)
+        if (_matchings != null && _matchings.ContainsKey(id))
         {
             string imageID = _matchings[id];
 
