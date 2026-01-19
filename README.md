@@ -40,3 +40,7 @@ The next image shows how you can access the exit plan feature from the main menu
 ![Events](./Example%20Images/events1.png)
 ![Events](./Example%20Images/events2.png)
 ![Events](./Example%20Images/events3.png)
+
+## Note
+
+In order for the csv files to be read correctly, they must be available in the main CSD3D repository inside the "Excel Files" folder. At the time of writing this README, this branch has not been merged with the main CSD3D repository, so the files must be copied manually. Once merged, this step will no longer be necessary.
