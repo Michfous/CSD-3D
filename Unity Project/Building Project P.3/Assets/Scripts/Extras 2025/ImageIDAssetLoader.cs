@@ -15,6 +15,8 @@ public class ImageIDAssetLoader : MonoBehaviour
         public string Uri;
         public Vector2 dimensions;
         public Vector2 offset;
+        public bool dimOverride;
+        public bool offsetOverride;
     }
 
     public string ImageMatchCSVURL = "https://raw.githubusercontent.com/kamarianakis/CSD-3D/refs/heads/main/Excel%20Files/IDToImage.csv";
@@ -79,17 +81,21 @@ public class ImageIDAssetLoader : MonoBehaviour
                 string imageId = columns[1].Trim();
                 Vector2 dimensions = Vector2.one; 
                 Vector2 offset = Vector2.zero;
+                bool dimOverride = false;
+                bool offsetOverride = false;
 
                 try
                 {
                     if (columns.Length >= 4)
                     {
                         dimensions = new Vector2(float.Parse(columns[2].Trim()), float.Parse(columns[3].Trim()));
+                        dimOverride = true;
                     }
 
                     if (columns.Length >= 6)
                     {
                         offset = new Vector2(float.Parse(columns[4].Trim()), float.Parse(columns[5].Trim()));
+                        offsetOverride = true;
                     }
                 } catch (FormatException e)
                 {
@@ -102,7 +108,8 @@ public class ImageIDAssetLoader : MonoBehaviour
                     Uri = imageId,
                     dimensions = dimensions,
                     offset = offset,
-
+                    dimOverride = dimOverride,
+                    offsetOverride = offsetOverride
                 };
 
                 if (!_matchings.ContainsKey(nameId))
@@ -164,12 +171,13 @@ public class ImageIDAssetLoader : MonoBehaviour
                         AssignTextureToImage(image, texture);
 
                         // Modify dimensions and offset accordingly
-                        if(image.TryGetComponent<RectTransform>(out RectTransform rect))
+                        if(imageData.dimOverride && image.TryGetComponent<RectTransform>(out RectTransform rect))
                         {
                             rect.sizeDelta = imageData.dimensions;
                         }
 
-                        image.transform.position += new Vector3(0f, imageData.offset.y, imageData.offset.x);
+                        if(imageData.offsetOverride)
+                            image.transform.position += new Vector3(0f, imageData.offset.y, imageData.offset.x);
                     }
                 }
             }
