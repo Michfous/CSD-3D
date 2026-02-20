@@ -42,6 +42,19 @@ public class ExcelToCanvas : MonoBehaviour
         }
     }
 
+    private GameObject FindFirstNotNull(params GameObject[] objects)
+    {
+        foreach (GameObject obj in objects)
+        {
+            if (obj != null)
+            {
+                return obj;
+            }
+        }
+
+        return null;
+    }
+
     void ProcessCSV(string csvText)
     {
         string[] allLines = csvText.Split('\n');
@@ -73,7 +86,32 @@ public class ExcelToCanvas : MonoBehaviour
                 TextMeshProUGUI nameTextMesh = canvas.transform.Find("Name")?.GetComponent<TextMeshProUGUI>();
                 TextMeshProUGUI detailsTextMesh = canvas.transform.Find("Details")?.GetComponent<TextMeshProUGUI>();
                 TextMeshProUGUI extraInfoTextMesh = canvas.transform.Find("Extra Info")?.GetComponent<TextMeshProUGUI>();
-                Image itemImage = canvas.transform.Find("Image")?.GetComponent<Image>();
+
+                GameObject imageAnchor = FindFirstNotNull(
+                    nameTextMesh != null ? nameTextMesh.gameObject : null,
+                    detailsTextMesh != null ? detailsTextMesh.gameObject : null,
+                    extraInfoTextMesh != null ? extraInfoTextMesh.gameObject : null
+                );
+
+                Transform imagePanel = canvas.transform.Find("Image");
+
+                // If there's no existing image create one (if there's a corresponding image to load).
+                if (imagePanel == null && imageAnchor != null && ImageIDAssetLoader.ExistsImageWithID(nameText))
+                {
+                    GameObject newImagePanelObj = Instantiate(new GameObject("Image"));
+                    newImagePanelObj.AddComponent<Image>();
+                    imagePanel = newImagePanelObj.transform;
+
+                    imagePanel.name = "Image";
+                    imagePanel.SetParent(canvas.transform);
+
+                    imagePanel.SetPositionAndRotation(
+                        imageAnchor.transform.position, 
+                        imageAnchor.transform.rotation
+                    );
+                }
+
+                Image itemImage = imagePanel != null ? imagePanel.GetComponent<Image>() : null;
 
                 if (nameTextMesh != null) nameTextMesh.text = nameText;
                 if (detailsTextMesh != null) detailsTextMesh.text = detailsText;

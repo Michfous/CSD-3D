@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
@@ -8,11 +10,18 @@ using static System.Net.Mime.MediaTypeNames;
 
 public class ImageIDAssetLoader : MonoBehaviour
 {
+    private struct ImagePlacementData
+    {
+        public string Uri;
+        public Vector2 dimensions;
+        public Vector2 offset;
+    }
+
     public string ImageMatchCSVURL = "https://raw.githubusercontent.com/kamarianakis/CSD-3D/refs/heads/main/Excel%20Files/IDToImage.csv";
     public bool isLocalURL = false;
 
     private static ImageIDAssetLoader _instance = null;
-    private static Dictionary<string, string> _matchings = null;
+    private static Dictionary<string, ImagePlacementData> _matchings = null;
 
     public void Start()
     {
@@ -23,7 +32,7 @@ public class ImageIDAssetLoader : MonoBehaviour
         }
 
         _instance = this;
-        _matchings = new Dictionary<string, string>();
+        _matchings = new Dictionary<string, ImagePlacementData>();
 
         if (isLocalURL)
         {
@@ -68,10 +77,37 @@ public class ImageIDAssetLoader : MonoBehaviour
             {
                 string nameId = columns[0].Trim();
                 string imageId = columns[1].Trim();
+                Vector2 dimensions = Vector2.one; 
+                Vector2 offset = Vector2.zero;
+
+                try
+                {
+                    if (columns.Length >= 4)
+                    {
+                        dimensions = new Vector2(float.Parse(columns[2].Trim()), float.Parse(columns[3].Trim()));
+                    }
+
+                    if (columns.Length >= 6)
+                    {
+                        offset = new Vector2(float.Parse(columns[4].Trim()), float.Parse(columns[5].Trim()));
+                    }
+                } catch (FormatException e)
+                {
+                    // Error => Skip this entry
+                    Debug.LogError($"Failed to parse image entry:{e.Message}, skipping...");
+                    continue;
+                }
+
+                ImagePlacementData imagePlacementData = new ImagePlacementData { 
+                    Uri = imageId,
+                    dimensions = dimensions,
+                    offset = offset,
+
+                };
 
                 if (!_matchings.ContainsKey(nameId))
                 {
-                    _matchings.Add(nameId, imageId);
+                    _matchings.Add(nameId, imagePlacementData);
                 }
             }
         }
@@ -94,18 +130,23 @@ public class ImageIDAssetLoader : MonoBehaviour
         _instance.StartCoroutine(_instance._SetImageByID(image, id));
     }
 
+    public static bool ExistsImageWithID(string id)
+    {
+        return _matchings != null && _matchings.ContainsKey(id);
+    }
+
     private IEnumerator _SetImageByID(UnityEngine.UI.Image image, string id)
     {
         if (_matchings != null && _matchings.ContainsKey(id))
         {
-            string imageID = _matchings[id];
+            ImagePlacementData imageData = _matchings[id];
 
-            if(imageID != null)
+            if(imageData.Uri != null)
             {
                 string filePath = Path.Combine(
                     UnityEngine.Application.streamingAssetsPath, 
                     "ImageAssets", 
-                    imageID
+                    imageData.Uri
                 );
 
                 using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(filePath))
@@ -121,6 +162,14 @@ public class ImageIDAssetLoader : MonoBehaviour
                         Texture2D texture = DownloadHandlerTexture.GetContent(uwr);
 
                         AssignTextureToImage(image, texture);
+
+                        // Modify dimensions and offset accordingly
+                        if(image.TryGetComponent<RectTransform>(out RectTransform rect))
+                        {
+                            rect.sizeDelta = imageData.dimensions;
+                        }
+
+                        image.transform.position += new Vector3(0f, imageData.offset.y, imageData.offset.x);
                     }
                 }
             }
