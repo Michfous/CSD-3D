@@ -1,6 +1,6 @@
 using System;
 
-// this is a helping class to load an array of EventConfigs because unity doesn't support it out of the box
+// this is a helper class to load an array of EventConfigs because unity doesn't support it out of the box
 [Serializable]
 
 public class EventConfigList
