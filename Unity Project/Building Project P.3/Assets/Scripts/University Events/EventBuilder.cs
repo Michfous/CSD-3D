@@ -113,6 +113,8 @@ public class EventBuilder : MonoBehaviour
             if (e.bannerUrl == null) continue;
             yield return imageLoader.Load(e.bannerUrl);
             if (imageLoader.GetImage() != null) bannerTextures.Add(imageLoader.GetImage());
+            // if we loaded as many textures as many we have banners, stop loading new textures
+            if(bannerTextures.Count == banners.Count) break;
         }
     }
 
