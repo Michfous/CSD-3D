@@ -44,3 +44,13 @@ The next image shows how you can access the exit plan feature from the main menu
 ## Note
 
 In order for the csv files to be read correctly, they must be available in the main CSD3D repository inside the "Excel Files" folder. At the time of writing this README, this branch has not been merged with the main CSD3D repository, so the files must be copied manually. Once merged, this step will no longer be necessary.
+
+## For future development
+
+If you ever need to modify the current structure of the CSV files, or add new ones (like in the case of the [images extension](./Excel%20Files/IDToImage.csv)), you can use the the local CSVs in the "Excel Files" folder. For this purpose this extension added a new option to CSV-fetching scripts (namely: 'Is Local URL'), which allows you to specify whether the CSV file should be fetched from the local "Excel Files" folder, or from GitHub. That way, you can easily test changes to the config CSV files without affecting the main ones until you're ready to merge.
+
+> __Useful debugging TIP__: After a painful debugging session, you may find that the original implementation doesn't work well without an internet connection, resulting in UI elements such as timetables remaining stuck in a visible state on game start. If you ever encounter such an issue, ensure you have a working internet connection when starting the game, as the original implementation relies on fetching CSV files from GitHub. This is a crucial step to ensure all UI elements function correctly.
+
+## Also see
+
+[Images Extension](./Excel%20Files/ImageGuide.md) - A config file that allows adding images to the different physical room descriptions in the department, without modifying the codebase.
